@@ -177,10 +177,11 @@ body {
   left: 0;
   top: 0;
   opacity: 1;
-  z-index: 10;
+  z-index: 100;
   font-size: 40px;
   font-weight: 600;
   color: #F8F8F8;
+  cursor: pointer;
 }
 
 .game-container {
@@ -390,12 +391,15 @@ h2 {
 }
 
 .fight__buttons {
+  background-color: #FF4656;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  position: -webkit-sticky;
+  position: sticky;
 }
 
 .fight__action {
@@ -415,12 +419,38 @@ h2 {
       -ms-flex-direction: column;
           flex-direction: column;
   margin: 10px;
+  overflow: auto;
 }
 
 .fight__text p {
   font-size: 16px;
-  color: #F8F8F8;
   line-height: 20px;
+  margin: 10px;
+  font-weight: 400;
+  -webkit-transition: 0.5s;
+  -o-transition: 0.5s;
+  transition: 0.5s;
+}
+
+.fight .character {
+  color: #FFFFFF;
+}
+
+.fight .villain {
+  color: #1F2326;
+  font-weight: 600;
+}
+
+.fight .health {
+  color: #1F2326;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.fight .death {
+  color: #1F2326;
+  text-shadow: 1px 1px 1px red;
+  font-weight: 600;
+  font-size: 20px;
 }
 
 @media (max-width: 1200px) {
@@ -448,5 +478,11 @@ h2 {
 
   .villain__card {
     margin: 7px 12px;
+    max-width: 240px;
+    height: 400px;
+  }
+
+  .card__properties.active {
+    height: 400px;
   }
 }

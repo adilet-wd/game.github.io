@@ -21,13 +21,18 @@ function refresh(){
 }
 // Значения переменных характеристик
 let propertiesValue = document.querySelector(".properties__amount");
-let propertiesAmount = 8;
+let propertiesAmount = 15;
 let villainSubmit = false;
+//Действие противника 1 - атака, 0 - блок 
+let actionVillain;
+// Объекты для хранения характеристик
 let charData;
-let villainData;    
+let villainData;
+//Временная защита для блока    
+let blockAttackChar = 0;
+let blockAttackVillain = 0; 
 // Вывод характеристик на сайт
 propertiesValue.innerHTML = `Очки характеристик: ${propertiesAmount}`;
-
 // Изменение значений характеристик
 function propertiesDown(name) {
     if (propertiesAmount != 0) {
@@ -116,35 +121,94 @@ document.querySelector('.villain__submit').addEventListener('click', function(it
 })
 
 //Передача текста в блок
-function gameRow(message) {
+function gameRow(message, person) {
     let rowArea = document.querySelector('.fight__text');
-    rowArea.innerHTML += `<p>${message}</p>`;
+    rowArea.innerHTML += `<p class="${person}">${message}</p>`;
+}
+//Блокирование
+function block() {
+    blockAttackChar = 1;
+    gameRow(`Вы поставили блок`, "character")
+    villainAction()
+    if (actionVillain == 0) {
+        villainBlock()
+    } else {
+        villainAttack()
+    }
+    blockAttackChar = 0;
+    blockAttackVillain = 0;
 }
 //Нанесение урона
 function attack() {
-    if (villainData.health <= 0) {
-        gameRow(`Враг уже мертв,не издевайся`)
+    villainAction()
+    if (actionVillain == 0) {
+        villainBlock()
+        if (blockAttackVillain == 1) {
+            gameRow("Противник заблокировал вашу атаку", "villain")
+        } 
     } else {
-        gameRow(`Вы нанесли ${charData.damage - villainData.armour} урона( Враг заблокировал ${villainData.armour} урона с помощью брони)`);
-        villainData.health -= (charData.damage - villainData.armour);
         if (villainData.health <= 0) {
-            gameRow(`Враг мертв`);
+            document.querySelector('.game-over').innerHTML = "You win"
+            document.querySelector('.game-over').style.display = 'flex';
         } else {
-            gameRow(`У врага осталось ${villainData.health} здоровья`);
+                if (charData.damage < villainData.armour ) {
+                    gameRow("Вы не можете нанести противнику урон,защита противника непробиваема", `character`)
+                } else {
+                    gameRow(`Вы нанесли ${charData.damage - villainData.armour} урона( Враг заблокировал ${villainData.armour} урона с помощью брони)`, `character`);
+                    villainData.health -= (charData.damage - villainData.armour);
+                    if (villainData.health <= 0) {
+                        gameRow(`Враг мертв`,`death`);
+                        document.querySelector('.game-over').innerHTML = "You win"
+                        document.querySelector('.game-over').style.display = 'flex';
+                    } else {
+                        gameRow(`У врага осталось ${villainData.health} здоровья`, `health`);
+                    }
+                }
+            }
+            villainAttack()
+    }
+    blockAttackVillain = 0;
+}
+
+//Атака противника
+function villainAttack() {
+    {
+        if (blockAttackChar) {
+            gameRow("Атака противника была заблокирована", `villain`)
+        } else {
+            if (villainData.damage < charData.armour ) {
+                gameRow("Противник не может нанести Вам урон,Ваша защита непробиваема", `villain`)
+            } else {
+                gameRow(`Противник нанес вам ${villainData.damage - charData.armour} урона( Вы заблокировали ${charData.armour} урона с помощью брони)`,  `villain`);
+                charData.health -= (villainData.damage - charData.armour);
+                if (charData.health <= 0) {
+                    gameRow(`Вы мертвы`, `death`)
+                    if (charData.health <= 0) {
+                        document.querySelector('.game-over').innerHTML = "Game over"
+                        document.querySelector('.game-over').style.display = 'flex';
+                    }
+                } else {
+                    gameRow(`У вас осталось ${charData.health} здоровья`, `health`);
+                }
+            }
         }
     }
 }
-//Block
-function block() {
-    if (villainData.health <= 0) {
-        gameRow(`Враг уже мертв,не издевайся`)
+
+//Блокирование противника
+function villainBlock () {
+    blockAttackVillain = 1;  
+    gameRow(`Противник поставил блок`, "villain")
+}
+
+//Действия противника
+function villainAction(){
+    action = Math.round(((+(Math.random().toFixed(4))*10000) % 10))
+    if (action <= 5) {
+        console.log("Атака")
+        return actionVillain = 1;
     } else {
-        gameRow(`Вы нанесли ${charData.damage - villainData.armour} урона( Враг заблокировал ${villainData.armour} урона с помощью брони)`);
-        villainData.health -= (charData.damage - villainData.armour);
-        if (villainData.health <= 0) {
-            gameRow(`Враг мертв`);
-        } else {
-            gameRow(`У врага осталось ${villainData.health} здоровья`);
-        }
+        console.log("Блок");
+        return actionVillain = 0;
     }
 }
