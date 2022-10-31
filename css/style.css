@@ -154,6 +154,10 @@ body {
   background-color: #F8F8F8;
 }
 
+body.active {
+  overflow: hidden;
+}
+
 .container {
   max-width: 1110px;
   width: 100%;
@@ -163,9 +167,8 @@ body {
 }
 
 .game-over {
-  position: absolute;
+  position: fixed;
   width: 100%;
-  height: 100%;
   display: none;
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -391,15 +394,26 @@ h2 {
 }
 
 .fight__buttons {
-  background-color: #FF4656;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  position: -webkit-sticky;
-  position: sticky;
+}
+
+.fight__buttons.fixed {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 5px 27px;
+  background-color: #1F2326;
+}
+
+.fight__buttons.fixed input {
+  background-color: #FF4656;
+  color: #FFFFFF;
 }
 
 .fight__action {
@@ -466,8 +480,46 @@ h2 {
 }
 
 @media (max-width: 767px) {
+  h1 {
+    font-size: 34px;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
+
   .container {
     max-width: 540px;
+  }
+
+  .game__properties {
+    font-size: 16px;
+  }
+
+  .properties {
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+
+  .properties__amount {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+
+  .properties__button {
+    font-size: 16px;
+    width: 23px;
+    height: 23px;
+  }
+
+  .properties__submit {
+    font-size: 6px;
+    font-size: 16px;
   }
 
   .game__villain {
@@ -477,12 +529,42 @@ h2 {
   }
 
   .villain__card {
-    margin: 7px 12px;
-    max-width: 240px;
-    height: 400px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .villain__card.active {
+    -webkit-box-shadow: -1px 0px 26px 7px rgba(0, 0, 0, 0.83);
+            box-shadow: -1px 0px 26px 7px rgba(0, 0, 0, 0.83);
+  }
+
+  .villain__submit {
+    height: auto;
+    padding: 6px;
+    font-size: 16px;
+  }
+
+  .card__properties {
+    position: static;
+    height: 320px;
+    font-size: 13px;
+  }
+
+  .card__properties p {
+    display: none;
   }
 
   .card__properties.active {
-    height: 400px;
+    border: none;
+  }
+
+  .fight__action {
+    width: 45%;
+    height: auto;
+    padding: 6px;
+    font-size: 16px;
   }
 }

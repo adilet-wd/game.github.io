@@ -21,7 +21,7 @@ function refresh(){
 }
 // Значения переменных характеристик
 let propertiesValue = document.querySelector(".properties__amount");
-let propertiesAmount = 15;
+let propertiesAmount = 20;
 let villainSubmit = false;
 //Действие противника 1 - атака, 0 - блок 
 let actionVillain;
@@ -31,6 +31,8 @@ let villainData;
 //Временная защита для блока    
 let blockAttackChar = 0;
 let blockAttackVillain = 0; 
+//Скролл для фиксирования действий
+let scrollElem;
 // Вывод характеристик на сайт
 propertiesValue.innerHTML = `Очки характеристик: ${propertiesAmount}`;
 // Изменение значений характеристик
@@ -79,11 +81,20 @@ function propertiesSubmit() {
     if (charData.health <= 0) {
         document.querySelector('.game-over').innerHTML = "Game over"
         document.querySelector('.game-over').style.display = 'flex';
+        let currentHeight = window.screen.height;
+        document.querySelector('.game-over').style.height = currentHeight + "px";
+        document.body.classList.add("active")
     }
     document.querySelector('.game__bar').style.display = 'flex';
 }
 //Выбор противника
 document.querySelectorAll('.villain__card').forEach((item) => {
+    item.addEventListener('click', function(c){
+        c.preventDefault();
+        document.querySelectorAll('.villain__card').forEach((child) => {
+            child.classList.remove("active")
+        } )
+    });
     item.addEventListener('click', function(e) {
         e.preventDefault();
         if (villainSubmit == false) {
@@ -92,12 +103,13 @@ document.querySelectorAll('.villain__card').forEach((item) => {
             ),
             item.querySelector(".card__properties").classList.add("active");
         }
-    })
+        this.classList.add("active");
+    });
 });
 
 //Подтверждение характеристик противника
 document.querySelector('.villain__submit').addEventListener('click', function(item){
-    let villainArea = document.querySelector('.card__properties.active')
+    let villainArea = document.querySelector('.card__properties.active');
     let healthValue = +(villainArea.querySelector('.villain__health').innerHTML);
     let damageValue = +(villainArea.querySelector('.villain__damage').innerHTML);
     let armourValue = +(villainArea.querySelector('.villain__armour').innerHTML);
@@ -115,6 +127,7 @@ document.querySelector('.villain__submit').addEventListener('click', function(it
             }
         }
     );
+    scrollElem = document.documentElement.clientHeight;
     this.style.display = "none";
     document.querySelector('.game__action').style.display = "flex";
     return villainSubmit = true;
@@ -160,6 +173,9 @@ function attack() {
                         gameRow(`Враг мертв`,`death`);
                         document.querySelector('.game-over').innerHTML = "You win"
                         document.querySelector('.game-over').style.display = 'flex';
+                        let currentHeight = window.screen.height;
+                        document.querySelector('.game-over').style.height = currentHeight + "px";
+                        document.body.classList.add("active")
                     } else {
                         gameRow(`У врага осталось ${villainData.health} здоровья`, `health`);
                     }
@@ -186,6 +202,9 @@ function villainAttack() {
                     if (charData.health <= 0) {
                         document.querySelector('.game-over').innerHTML = "Game over"
                         document.querySelector('.game-over').style.display = 'flex';
+                        let currentHeight = window.screen.height;
+                        document.querySelector('.game-over').style.height = currentHeight + "px";
+                        document.body.classList.add("active")
                     }
                 } else {
                     gameRow(`У вас осталось ${charData.health} здоровья`, `health`);
@@ -210,5 +229,12 @@ function villainAction(){
     } else {
         console.log("Блок");
         return actionVillain = 0;
+    }
+}
+window.onscroll = function fixedAction() {
+    if (window.pageYOffset > 1457) {
+        document.querySelector('.fight__buttons').classList.add('fixed')
+    } else {
+        document.querySelector('.fight__buttons').classList.remove('fixed')
     }
 }
